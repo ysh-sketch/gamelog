@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS comments;
 DROP TABLE IF EXISTS cdkeys;
 DROP TABLE IF EXISTS games;
 create table games (
@@ -16,5 +17,13 @@ create table cdkeys (
     code varchar(50) not null unique,
     status varchar(5) check (status in ('未售', '已售')) not null default '未售',
     price NUMERIC(10,2) check (price >=0),
+    created_at timestamp with time zone default current_timestamp not null
+);
+
+create table comments (
+    id bigint primary key not null GENERATED ALWAYS AS IDENTITY,
+    game_id bigint not null references games(id) on delete cascade,
+    user_id bigint not null references users(id) on delete cascade,
+    content text not null,
     created_at timestamp with time zone default current_timestamp not null
 );
