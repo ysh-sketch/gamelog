@@ -1,6 +1,13 @@
 DROP TABLE IF EXISTS comments;
 DROP TABLE IF EXISTS cdkeys;
 DROP TABLE IF EXISTS games;
+DROP TABLE IF EXISTS users;
+create table users (
+    id bigint primary key not null GENERATED ALWAYS AS IDENTITY,
+    username varchar(50) not null unique,
+    password_hash varchar(100) not null,
+    created_at timestamp with time zone default current_timestamp not null
+);
 create table games (
     id bigint primary key not null GENERATED ALWAYS AS IDENTITY,
     name varchar(50) not null,
