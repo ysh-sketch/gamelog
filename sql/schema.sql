@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS comments;
+DROP TABLE IF EXISTS likes;
 DROP TABLE IF EXISTS cdkeys;
 DROP TABLE IF EXISTS games;
 DROP TABLE IF EXISTS users;
@@ -34,3 +35,10 @@ create table comments (
     content text not null,
     created_at timestamp with time zone default current_timestamp not null
 );
+create table likes(
+    id bigint primary key not null GENERATED ALWAYS AS IDENTITY,
+    game_id bigint not null references games(id) on delete cascade,
+    user_id bigint not null references users(id) on delete cascade,
+    created_at timestamp with time zone default current_timestamp not null,
+    unique (game_id, user_id)
+)
