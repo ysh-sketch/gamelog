@@ -7,12 +7,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.UUID;
 
 import java.util.List;
 
 @RestController
 public class GameController {
     private final GameMapper gameMapper;
+    private static final String UPLOAD_DIR = "/home/ava/gamelog-uploads/";
 
     public GameController(GameMapper gameMapper) {
         this.gameMapper = gameMapper;
@@ -29,6 +37,31 @@ public class GameController {
         gameMapper.insert(game);
         Game addedGame = gameMapper.findById(game.getId());
         return Result.success(addedGame);
+    }
+
+    @PostMapping("/games/{id}/screenshot")
+    public Result<String> upload(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            throw new BizException(400, "文件为空");
+        }
+        try {
+            Files.createDirectories(Path.of(UPLOAD_DIR));
+            String original = file.getOriginalFilename();
+            String ext = "";
+            if (original != null && original.contains(".")) {
+                ext = original.substring(original.lastIndexOf('.'));
+            }
+            String saved = UUID.randomUUID() + ext;
+            file.transferTo(Path.of(UPLOAD_DIR, saved));
+            Game game = gameMapper.findById(id);
+            if (game == null) {
+                throw new BizException(404, "游戏不存在");
+            }
+            gameMapper.updateScreenshot(id, saved);
+            return Result.success(saved);
+        } catch (IOException e) {
+            throw new BizException(500, "上传失败：" + e.getMessage());
+        }
     }
 
     @GetMapping("/games/{id}")

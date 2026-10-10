@@ -9,6 +9,7 @@ public class Game {
     private String state;
     private Integer rating;
     private String reflection;
+    private String screenshot;
     private OffsetDateTime createdAt;
 
     public Long getId() {
@@ -51,6 +52,13 @@ public class Game {
     }
     public void setReflection(String reflection) {
         this.reflection = reflection;
+    }
+
+    public String getScreenshot() {
+        return screenshot;
+    }
+    public void setScreenshot(String screenshot) {
+        this.screenshot = screenshot;
     }
 
     public OffsetDateTime getCreatedAt() {

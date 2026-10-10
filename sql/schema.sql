@@ -16,6 +16,7 @@ create table games (
     state varchar(5) check (state in ('在玩', '通关', '弃坑')),
     rating int check (rating >=0 and rating <=100),
     reflection varchar(1000),
+    screenshot varchar(100),
     created_at timestamp with time zone default current_timestamp not null
 );
 

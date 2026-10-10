@@ -4,6 +4,12 @@ spring:
         username: gamelog
         password: gamelog123
         driver-class-name: org.postgresql.Driver
+    servlet:
+        multipart:
+            max-file-size: 10MB
+            max-request-size: 10MB
+
+
 
 mybatis:
     configuration:

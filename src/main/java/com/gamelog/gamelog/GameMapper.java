@@ -12,16 +12,19 @@ import java.util.List;
 
 @Mapper
 public interface GameMapper {
-    @Select("SELECT id, name, platform, state, rating, reflection, created_at FROM games")
+    @Select("SELECT id, name, platform, state, rating, reflection,screenshot, created_at FROM games")
     List<Game> findAll();
 
-    @Insert("INSERT INTO games (name, platform, state, rating, reflection) VALUES (#{name}, #{platform}, #{state}, #{rating}, #{reflection})")
+    @Insert("INSERT INTO games (name, platform, state, rating, reflection, screenshot) VALUES (#{name}, #{platform}, #{state}, #{rating}, #{reflection}, #{screenshot})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insert(Game game);
 
-    @Select("SELECT id, name, platform, state, rating, reflection, created_at FROM games WHERE id = #{id}")
+    @Select("SELECT id, name, platform, state, rating, reflection, screenshot, created_at FROM games WHERE id = #{id}")
     Game findById(Long id);
-
+    
+    @Update("UPDATE games SET screenshot = #{screenshot} WHERE id = #{id}")
+    int updateScreenshot(@Param("id") Long id, @Param("screenshot") String screenshot);
+    
     @Update("UPDATE games SET platform = #{platform} WHERE id = #{id}")
     int updatePlatform(@Param("id") Long id, @Param("platform") String platform);
 

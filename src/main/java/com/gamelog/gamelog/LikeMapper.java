@@ -23,3 +23,5 @@ public interface LikeMapper {
     @Delete("DELETE FROM likes WHERE user_id = #{userId} AND game_id = #{gameId}")
     int delete(@Param("userId") Long userId, @Param("gameId") Long gameId);
 }
+
+
