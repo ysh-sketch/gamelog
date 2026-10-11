@@ -18,6 +18,15 @@ public class HelloController {
         this.userMapper = userMapper;
     }
 
+    @PostMapping("/login")
+    public Result<String> login(@RequestBody LoginRequest request) {
+        User user = userMapper.findByUsername(request.username());
+        if (user == null || !user.getPasswordHash().equals(request.password())) {
+            throw new BizException(401, "用户名或密码错误");
+        }
+        return Result.success(JwtUtil.generate(user.getId()));
+    }
+
     @GetMapping("/users")
     public Result<List<UserResponse>> getUsers() {
         List<UserResponse> list = userMapper.findAll().stream()
@@ -30,7 +39,8 @@ public class HelloController {
     public Result<UserResponse> register(@RequestBody User user) {
         userMapper.insert(user);
         User registeredUser = userMapper.findById(user.getId());
-        return Result.success(new UserResponse(registeredUser.getId(), registeredUser.getUsername(), registeredUser.getCreatedAt()));
+        return Result.success(
+                new UserResponse(registeredUser.getId(), registeredUser.getUsername(), registeredUser.getCreatedAt()));
     }
 
     @GetMapping("/users/{id}")

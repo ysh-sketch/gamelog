@@ -9,6 +9,7 @@ import com.gamelog.gamelog.CommentMapper;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 
 import java.util.List;
 
@@ -21,7 +22,8 @@ public class LikeController {
     }
 
     @PostMapping("/likes")
-    public Result<Like> addLike(@RequestBody Like like) {
+    public Result<Like> addLike(@RequestBody Like like, @RequestAttribute Long userId) {
+        like.setUserId(userId);
         int rows = likeMapper.insert(like);
         if (rows == 0) {
             throw new BizException(409, "已经点过赞了");
@@ -30,8 +32,8 @@ public class LikeController {
         return Result.success(savedLike);
     }
 
-    @DeleteMapping("/likes/{userId}/{gameId}")
-    public Result<Long> deleteLike(@PathVariable Long userId, @PathVariable Long gameId) {
+    @DeleteMapping("/likes/{gameId}")
+    public Result<Long> deleteLike(@PathVariable Long gameId, @RequestAttribute Long userId) {
         int deletedRows = likeMapper.delete(userId, gameId);
         if (deletedRows == 0) {
             throw new BizException(404, "点赞不存在");

@@ -9,6 +9,7 @@ import com.gamelog.gamelog.CommentMapper;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 
 import java.util.List;
 
@@ -21,7 +22,8 @@ public class CommentController {
     }
 
     @PostMapping("/comments")
-    public Result<Comment> addComment(@RequestBody Comment comment) {
+    public Result<Comment> addComment(@RequestBody Comment comment, @RequestAttribute Long userId) {
+        comment.setUserId(userId);
         commentMapper.insert(comment);
         Comment addedComment = commentMapper.findById(comment.getId());
         return Result.success(addedComment);

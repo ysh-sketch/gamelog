@@ -12,6 +12,10 @@ import java.util.List;
 
 @Mapper
 public interface UserMapper {
+
+    @Select("SELECT id, username, password_hash, created_at FROM users WHERE username = #{username}")
+    User findByUsername(String username);
+
     @Select("SELECT id, username, created_at FROM users")
     List<User> findAll();
 
@@ -28,4 +32,3 @@ public interface UserMapper {
     @Delete("DELETE FROM users WHERE id = #{id}")
     int delete(Long id);
 }
-
