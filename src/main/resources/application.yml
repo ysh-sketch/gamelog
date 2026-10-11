@@ -15,3 +15,7 @@ mybatis:
     configuration:
         map-underscore-to-camel-case: true
         arg-name-based-constructor-auto-mapping: true
+
+jwt:
+    secret: gamelog-secret-key-please-change-in-production-2026
+    expire-ms: 86400000
