@@ -1,12 +1,17 @@
 package com.gamelog.gamelog;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+    private final LoginInterceptor loginInterceptor;
+
+    public WebConfig(LoginInterceptor loginInterceptor) {
+        this.loginInterceptor = loginInterceptor;
+    }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -14,10 +19,10 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations("file:/home/ava/gamelog-uploads/");
     }
 
-    @Override 
+    @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new LoginInterceptor())
+        registry.addInterceptor(loginInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/login");
+                .excludePathPatterns("/login", "/users");
     }
 }

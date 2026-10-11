@@ -13,9 +13,11 @@ import java.util.List;
 @RestController
 public class HelloController {
     private final UserMapper userMapper;
+    private final JwtUtil jwtUtil;
 
-    public HelloController(UserMapper userMapper) {
+    public HelloController(UserMapper userMapper, JwtUtil jwtUtil) {
         this.userMapper = userMapper;
+        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping("/login")
@@ -24,7 +26,8 @@ public class HelloController {
         if (user == null || !user.getPasswordHash().equals(request.password())) {
             throw new BizException(401, "用户名或密码错误");
         }
-        return Result.success(JwtUtil.generate(user.getId()));
+        String token = jwtUtil.generate(user.getId());
+        return Result.success(token);
     }
 
     @GetMapping("/users")
