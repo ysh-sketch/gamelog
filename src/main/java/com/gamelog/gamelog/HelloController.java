@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
 
@@ -14,16 +15,27 @@ import java.util.List;
 public class HelloController {
     private final UserMapper userMapper;
     private final JwtUtil jwtUtil;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     public HelloController(UserMapper userMapper, JwtUtil jwtUtil) {
         this.userMapper = userMapper;
         this.jwtUtil = jwtUtil;
+        this.passwordEncoder = new BCryptPasswordEncoder();
+    }
+
+    @PostMapping("/users")
+    public Result<UserResponse> register(@RequestBody User user) {
+        user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
+        userMapper.insert(user);
+        User registeredUser = userMapper.findById(user.getId());
+        return Result.success(
+                new UserResponse(registeredUser.getId(), registeredUser.getUsername(), registeredUser.getCreatedAt()));
     }
 
     @PostMapping("/login")
     public Result<String> login(@RequestBody LoginRequest request) {
         User user = userMapper.findByUsername(request.username());
-        if (user == null || !user.getPasswordHash().equals(request.password())) {
+        if (user == null || !passwordEncoder.matches(request.password(), user.getPasswordHash())) {
             throw new BizException(401, "用户名或密码错误");
         }
         String token = jwtUtil.generate(user.getId());
@@ -36,14 +48,6 @@ public class HelloController {
                 .map(user -> new UserResponse(user.getId(), user.getUsername(), user.getCreatedAt()))
                 .toList();
         return Result.success(list); // 整个 List 作为一个对象装进信封
-    }
-
-    @PostMapping("/users")
-    public Result<UserResponse> register(@RequestBody User user) {
-        userMapper.insert(user);
-        User registeredUser = userMapper.findById(user.getId());
-        return Result.success(
-                new UserResponse(registeredUser.getId(), registeredUser.getUsername(), registeredUser.getCreatedAt()));
     }
 
     @GetMapping("/users/{id}")
