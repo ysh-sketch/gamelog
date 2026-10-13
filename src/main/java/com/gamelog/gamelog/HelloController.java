@@ -24,8 +24,13 @@ public class HelloController {
     }
 
     @PostMapping("/users")
-    public Result<UserResponse> register(@RequestBody User user) {
-        user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
+    public Result<UserResponse> register(@RequestBody LoginRequest request) {
+        if (userMapper.findByUsername(request.username()) != null) {
+            throw new BizException(400, "用户名已存在");
+        }
+        User user = new User();
+        user.setUsername(request.username());
+        user.setPasswordHash(passwordEncoder.encode(request.password()));
         userMapper.insert(user);
         User registeredUser = userMapper.findById(user.getId());
         return Result.success(
