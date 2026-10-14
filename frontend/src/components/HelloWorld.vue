@@ -4,7 +4,7 @@ const likes = ref(0)
 const games = ref([])
 fetch('http://localhost:8080/games')
   .then(res => res.json())
-  .then(body => {games.value = body.data })
+  .then(body => { games.value = body.data })
 defineProps({
   msg: {
     type: String,
@@ -17,8 +17,11 @@ defineProps({
   <div class="greetings">
     <h1 class="green">{{ msg }}</h1>
     <button @click="likes++">👍 {{ likes }}</button>
-    <ul>
-      <li v-for="g in games" :key="g.id">{{g.name }} · {{ g.rating }} 分</li>
+    <ul class="space-y-2">
+      <li v-for="g in games" :key="g.id"
+        class="bg-gray-800 text-gray-100 p-4 rounded-lg hover:bg-gray-700 cursor-pointer">
+        {{ g.name }} · {{ g.rating }} 分
+      </li>
     </ul>
     <h3>
       You’ve successfully created a project with
@@ -46,6 +49,7 @@ h3 {
 }
 
 @media (min-width: 1024px) {
+
   .greetings h1,
   .greetings h3 {
     text-align: left;
