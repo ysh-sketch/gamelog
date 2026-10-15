@@ -20,6 +20,8 @@ function handleLogin() {
             if (body.code === 0) {
                 localStorage.setItem('token', body.data)
                 console.log('登录成功，token已入库')
+                localStorage.setItem('token', body.data)
+                localStorage.setItem('username', username.value)
             }
             else {
                 console.log('登录失败')
