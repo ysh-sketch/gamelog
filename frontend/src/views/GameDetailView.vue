@@ -23,19 +23,26 @@ function postComment() {
         .then(body => {
             if (body.code == 0) {
                 console.log('评论成功')
+                content.value = ""
+                loadComments()
             } else {
                 console.log('失败：', body.message)
             }
         })
 }
 
-fetch('http://localhost:8080/games/' + route.params.id)
-    .then(response => response.json())
-    .then(body => { game.value = body.data })
-
-fetch('http://localhost:8080/comments/' + route.params.id)
+function loadComments() {
+    fetch('http://localhost:8080/comments/' + route.params.id)
     .then(response => response.json())
     .then(body => { comments.value = body.data })
+}
+
+loadComments()
+
+fetch('http://localhost:8080/games/' + route.params.id)
+    .then(response => response.json())
+    .then(body => {game.value = body.data })
+
 </script>
 
 <template>
