@@ -5,6 +5,29 @@ import { useRoute } from 'vue-router'
 const route = useRoute()
 const comments = ref([])
 const game = ref(null)
+const content = ref('')
+
+function postComment() {
+    fetch('http://localhost:8080/comments', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('token'),
+        },
+        body: JSON.stringify({
+            gameId: Number(route.params.id),
+            content: content.value,
+        }),
+    })
+        .then(res => res.json())
+        .then(body => {
+            if (body.code == 0) {
+                console.log('评论成功')
+            } else {
+                console.log('失败：', body.message)
+            }
+        })
+}
 
 fetch('http://localhost:8080/games/' + route.params.id)
     .then(response => response.json())
@@ -26,7 +49,14 @@ fetch('http://localhost:8080/comments/' + route.params.id)
         <!--评论区-->
         <h2 class="text-xl font-bold mt-8 mb-4">评论</h2>
 
-        <p v-if="comment.length === 0" class="text-gray-400">还没有评论</p>
+        <div class="mt-4 flex gap-2">
+            <input v-model="content" placeholer="评论些什么吧"
+                class="flex-1 bg-gray-800 text-gray-100 px-3 py-2 rounded-lg" />
+            <button @click="postComment"
+                class="px-4 py-2 text-sm bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg">发表</button>
+        </div>
+
+        <p v-if="comments.length === 0" class="text-gray-400">还没有评论</p>
 
         <div v-else>
             <div v-for="c in comments" :key="c.id" class="bg-gray-800 p-3 rounded-lg mb-3">
@@ -37,15 +67,3 @@ fetch('http://localhost:8080/comments/' + route.params.id)
         </div>
     </main>
 </template>
-
-
-cd ~/aigc-run && venv/bin/python - <<'EOF'
-import sys; sys.path.insert(0, "code")
-from create_input_files import encode_captions
-
-wm = {"<pad>": 0, "<unk>": 1, "<start>": 2, "<end>": 3}
-for n in (5, 50, 51, 52, 60):
-    ret, seqlen = encode_captions(["w"] * n, wm, 52)
-    ok = "✓" if len(ret) == 52 and ret.count(3) == 1 else "✗"
-    print(f"n={n:3d} 总长{len(ret):3d} end个数{ret.count(3)} {ok}")
-EOF
