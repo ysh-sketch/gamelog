@@ -33,21 +33,23 @@ function postComment() {
 
 function loadComments() {
     fetch('http://localhost:8080/comments/' + route.params.id)
-    .then(response => response.json())
-    .then(body => { comments.value = body.data })
+        .then(response => response.json())
+        .then(body => { comments.value = body.data })
 }
 
 loadComments()
 
 fetch('http://localhost:8080/games/' + route.params.id)
     .then(response => response.json())
-    .then(body => {game.value = body.data })
+    .then(body => { game.value = body.data })
 
 </script>
 
 <template>
     <main class="max-w-4xl mx-auto px-4 py-8" v-if="game">
-        <div class="h-48 bg-gradient-to-br from-indigo-600 to-purple-700 rounded-lg"></div>
+        <img v-if="game.screenshot" :src="'http://localhost:8080/uploads/' + game.screenshot"
+            class="h-48 w-full object-cover" />
+        <div v-else class="h-48 bg-gradient-to-br from-indigo-600 to-purple-700 rounded-lg"></div>
         <h1 class="text-3xl font-bold mt-4">{{ game.name }}</h1>
         <p class="text-gray-400 mt-2">{{ game.platform }} · {{ game.state }} · {{ game.rating }} 分</p>
         <p v-if="game.reflection" class="mt-4 text-gray-300">{{ game.reflection }}</p>

@@ -14,7 +14,10 @@ fetch('http://localhost:8080/games')
     <ul class="grid grid-cols-4 gap-4">
       <li v-for="g in games" :key="g.id"
         class="bg-gray-800 rounded-lg overflow-hidden hover:bg-gray-700 cursor-pointer">
-        <div class="h-32 bg-gradient-to-br from-indigo-600 to-green-700"> </div>
+        <img v-if="g.screenshot"
+            :src="'http://localhost:8080/uploads/' + g.screenshot"
+            class="h-32 w-full object-cover"  />
+        <div v-else class="h-32 bg-gradient-to-br from-indigo-600 to-green-700"> </div>
         <div class="p-3">
           <div class="flex items-center justify-between">
             <div>
