@@ -43,7 +43,7 @@ fetch('http://localhost:8080/games/' + route.params.id)
     .then(response => response.json())
     .then(body => { game.value = body.data })
 
-</script>
+</script> 
 
 <template>
     <main class="max-w-4xl mx-auto px-4 py-8" v-if="game">
